@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "928529484606",
+    "firebase_url": "https://chati-1687a.firebaseio.com",
+    "project_id": "chati-1687a",
+    "storage_bucket": "chati-1687a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928529484606:android:0b1ff7a006718459",
+        "android_client_info": {
+          "package_name": "com.example.leo.trackme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "928529484606-ds84s051sv7h7u0dgfa4scuk3e0n9e1o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.leo.trackme",
+            "certificate_hash": "70fa45b68e9e333bce06495812080154290824f6"
+          }
+        },
+        {
+          "client_id": "928529484606-8mudgfpalt7el6h8qok232fs4cuiar3c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7BNZPTPl78n01CxHRYZPcp93XYX8EOQs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "928529484606-8mudgfpalt7el6h8qok232fs4cuiar3c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
