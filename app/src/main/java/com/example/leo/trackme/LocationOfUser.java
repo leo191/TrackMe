@@ -1,37 +1,34 @@
 package com.example.leo.trackme;
 
-import android.location.Location;
 
-/**
- * Created by leo on 15/04/17.
- */
 
-public class LocationOfUser {
 
-    public String lati;
+ class LocationOfUser {
 
-    public void setLati(String lati) {
-        this.lati = lati;
+    private Double lat;
+
+    public void setLati(Double lati) {
+        this.lat = lati;
     }
 
-    public void setLongi(String longi) {
+    public void setLongi(Double longi) {
         this.longi = longi;
     }
 
-    public String getLati() {
-        return lati;
+    private Double getLati() {
+        return lat;
     }
 
-    public String getLongi() {
+    private Double getLongi() {
         return longi;
     }
 
-    public String longi;
+    private Double longi;
     public LocationOfUser(){}
 
-    public LocationOfUser(String latitude,String longitude)
+    public LocationOfUser(Double latitude,Double longitude)
     {
-        lati=latitude;
+        lat=latitude;
         longi=longitude;
     }
 
