@@ -91,5 +91,22 @@
         android:layout_below="@+id/trackbt"
         android:layout_alignParentEnd="true" />
 
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/rad_normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal View"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/rad_sat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Satalite View"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+
 
 </RelativeLayout>
