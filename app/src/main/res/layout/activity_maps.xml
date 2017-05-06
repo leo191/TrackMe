@@ -9,26 +9,8 @@
     >
 
 
-    <Button
 
-        android:id="@+id/trackbt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:text="Tack"
-        android:layout_below="@+id/search_ed"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="10dp"/>
-    <Button
-        android:layout_toRightOf="@+id/trackbt"
-        android:id="@+id/directbt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:text="Directtion"
-        android:layout_below="@+id/search_ed"
-         />
+
 
 
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -38,9 +20,11 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    />
+    android:layout_alignParentTop="true"
+    android:layout_alignParentStart="true" />
 
     <EditText
+
         android:background="@android:color/background_light"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="5dp"
@@ -51,7 +35,6 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="your name"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
     <EditText
         android:layout_below="@+id/user_ed"
@@ -77,6 +60,36 @@
         android:textSize="20dp"
         android:background="@android:color/white"
         android:text="TextView" />
+    <Button
+
+        android:id="@+id/trackbt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:text="Tack"
+        android:layout_below="@+id/search_ed"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="10dp"/>
+
+    <Button
+        android:id="@+id/add"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="+"
+        android:textSize="20dp"
+        android:layout_above="@+id/sub"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/sub"
+        android:layout_marginTop="-15dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:textSize="30dp"
+        android:text="-"
+        android:layout_below="@+id/trackbt"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

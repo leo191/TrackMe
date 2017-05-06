@@ -5,7 +5,7 @@ package com.example.leo.trackme;
 
  class LocationOfUser {
 
-    private Double lat;
+    public Double lat;
 
     public void setLati(Double lati) {
         this.lat = lati;
@@ -15,15 +15,15 @@ package com.example.leo.trackme;
         this.longi = longi;
     }
 
-    private Double getLati() {
+    public Double getLati() {
         return lat;
     }
 
-    private Double getLongi() {
+    public Double getLongi() {
         return longi;
     }
 
-    private Double longi;
+    public Double longi;
     public LocationOfUser(){}
 
     public LocationOfUser(Double latitude,Double longitude)
