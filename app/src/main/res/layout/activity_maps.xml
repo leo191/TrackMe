@@ -12,7 +12,6 @@
 
 
 
-
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,8 +19,12 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+
     android:layout_alignParentTop="true"
     android:layout_alignParentStart="true" />
+
+
 
     <EditText
 
@@ -91,22 +94,36 @@
         android:layout_below="@+id/trackbt"
         android:layout_alignParentEnd="true" />
 
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:orientation="horizontal">
-        <RadioButton android:id="@+id/rad_normal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Normal View"
-            android:onClick="onRadioButtonClicked"/>
-        <RadioButton android:id="@+id/rad_sat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Satalite View"
-            android:onClick="onRadioButtonClicked"/>
-    </RadioGroup>
 
+
+    <ImageView
+        android:id="@+id/normal_map_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignEnd="@+id/search_ed"
+        android:layout_below="@+id/satalite_map_button"
+        android:layout_marginEnd="16dp"
+
+        android:src="@drawable/earth_map" />
+    <ImageView
+        android:id="@+id/satalite_map_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignEnd="@+id/search_ed"
+        android:layout_below="@+id/sub"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="53dp"
+        android:src="@drawable/earth" />
+
+
+    <!--<ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/earth1"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        />-->
 
 </RelativeLayout>

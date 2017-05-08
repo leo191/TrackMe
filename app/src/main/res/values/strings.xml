@@ -4,5 +4,8 @@
 
     <string name="title_activity_fullscreen_splace">FullscreenSplaceActivity</string>
     <string name="dummy_button">Dummy Button</string>
+    <string name="gps_network_not_enabled">Network is not Enabled</string>
+    <string name="open_location_settings">Turn on Network</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="Cancel">Cancel</string>
 </resources>
