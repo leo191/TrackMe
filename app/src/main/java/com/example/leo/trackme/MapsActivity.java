@@ -3,6 +3,7 @@ package com.example.leo.trackme;
 
 import android.*;
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,7 +11,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.GnssStatus;
 import android.location.Location;
 
@@ -69,11 +75,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
 import java.util.Objects;
 
 
+import Modules.LatLngInterpolator;
+
+import static com.example.leo.trackme.R.id.add;
 import static com.example.leo.trackme.R.id.map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -84,11 +94,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Double vlat, vlong;
     Double latitude, longitude;
     //Views Variables
-    Button btTrack;
+    Button btTrack;//Me testing
     EditText edsearch, edusername;
     DatabaseReference dRef;
     Button pl, min;
-    LatLng last_curr_pos,notlatlong;
+    LatLng last_curr_pos, notlatlong;
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private FusedLocationProviderApi locationProviderApi = LocationServices.FusedLocationApi;
@@ -100,7 +110,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     View mapView;
     LatLng first_curr_pos;
     Marker mrk;
-    Polyline polyLine; Circle circle;
+    Polyline polyLine;
+    Circle circle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,11 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         setContentView(R.layout.activity_maps);
         //If Location Is turned off
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window w = getWindow(); // in Activity's onCreate() for instance
-            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+
 
         //Google api client for FusedLocationProvider
         googleApiClient = new GoogleApiClient.Builder(this).
@@ -126,7 +133,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setInterval(10 * 1000);
         locationRequest.setFastestInterval(5 * 1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        vlat = vlong = 0.0000;
+
+        StatusBarMod();
+
 
         //firebase Reference Initialization
         dRef = FirebaseDatabase.getInstance().getReference();
@@ -146,8 +155,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         edsearch = (EditText) findViewById(R.id.search_ed);
 
-        pl = (Button) findViewById(R.id.add);
-        min = (Button) findViewById(R.id.sub);
 
 
         normal = (ImageView) findViewById(R.id.normal_map_button);
@@ -192,112 +199,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-//        if(mMap!=null)
-//        {
-//            mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-//                @Override
-//                public boolean onMyLocationButtonClick() {
-//                    if(latitude == null&& longitude == null)
-//                    {
-//
-//                    }
-//                    LatLng target = new LatLng(latitude, longitude);
-//                    CameraPosition position = mMap.getCameraPosition();
-//
-//                    CameraPosition.Builder builder = new CameraPosition.Builder();
-//                    builder.zoom(15);
-//                    builder.target(target);
-//
-//                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(builder.build()));
-//                    return  true;
-//
-//                }
-//
-//            });
-//        }
-//
-        
 
 
-         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        checkforNetworkAndGps(lm);
+        //animateToMyLoc();
 
     }
 
 
-    private void checkforNetworkAndGps(LocationManager lm) {
 
 
-        if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
-        {
 
+
+
+    void StatusBarMod()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow(); // in Activity's onCreate() for instance
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
-        else {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyAlertDialogStyle);
-            builder.setTitle("Need Location");
-            builder.setMessage("We Require Location access to Continue Tracking.... ");
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(intent);
-
-
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
-            builder.setCancelable(false);
-            builder.show();
-
-
-        }
-
-
-
-
-        /*boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
-
-        try {
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
-
-        if(!gps_enabled && !network_enabled) {
-            // notify user
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.setMessage(context.getResources().getString(R.string.gps_network_not_enabled));
-            dialog.setPositiveButton(context.getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    context.startActivity(myIntent);
-                    //get gps
-                }
-            });
-            dialog.setNegativeButton(context.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    finish();
-
-                }
-            });
-            dialog.show();
-        }*/
     }
+
+
+
+
+
     float[] distance = new float[2];
     int c=0;
 
@@ -305,7 +232,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     void locationUpUI(String s)
     {
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.bus);
+        icon = Bitmap.createScaledBitmap(icon,100,50,true);
 
+        mrk = mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude,longitude))
+                .title("Marker in " + edsearch.getText().toString() + " ass")
+                .icon(BitmapDescriptorFactory.fromBitmap(icon))
+                .anchor(0.5f, 1));
+        mrk.setVisible(false);
 
         //Read Specific User Data From FireBase
         DatabaseReference tr = dRef.child(s);
@@ -314,10 +249,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 usr = dataSnapshot.getValue(LocationOfUser.class);
-
+                mrk.setVisible(true);
                  first_curr_pos= new LatLng(usr.getLati(), usr.getLongi());
-                if(mrk!=null){mrk.remove();}
-                 mrk = mMap.addMarker(new MarkerOptions().position(first_curr_pos).title("Marker in " + edsearch.getText().toString() + " ass"));
+
+
+
+                mrk.setPosition(first_curr_pos);
+
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(first_curr_pos));
 
@@ -325,31 +263,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         16f,
                         mMap.getCameraPosition().tilt, //use old tilt
                         mMap.getCameraPosition().bearing); //use old bearing
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCamPos), 4000, null);
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCamPos), 3000, null);
 
                 //Handler for Animating Marker
                 if(last_curr_pos!=null) {
-                    animateMarker(last_curr_pos,first_curr_pos,mrk);
+                    float rotation = (float) SphericalUtil.computeHeading(last_curr_pos, first_curr_pos);
+                    animateMarker(last_curr_pos,first_curr_pos,mrk,rotation);
                 }
                 last_curr_pos=first_curr_pos;
-                if(circle!=null)
-                {
-                    Location.distanceBetween( mrk.getPosition().latitude, mrk.getPosition().longitude,
-                            circle.getCenter().latitude, circle.getCenter().longitude, distance);
-                    if( distance[0] < circle.getRadius()  ){
-
-                    if(c==0)
-                    {
-                       NotifyParents();
-
-                    }
-                    }
-                    else {
-                        c=0;
-                    }
-                }
 
 
+                CheckBusDistance();
 
             }
 
@@ -360,6 +284,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
     }
+
+    void CheckBusDistance()
+    {
+        if(circle!=null)
+        {
+            Location.distanceBetween( mrk.getPosition().latitude, mrk.getPosition().longitude,
+                    circle.getCenter().latitude, circle.getCenter().longitude, distance);
+            if( distance[0] < circle.getRadius()  ){
+
+                if(c==0)
+                {
+                    NotifyParents();
+
+                }
+            }
+            else {
+                c=0;
+            }
+        }
+    }
+
+
+
 
 
 
@@ -377,14 +324,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     PendingIntent.getActivity(
                             this,
                             0,
-                            new Intent(this,MapsActivity.class),
+                            new Intent(getApplicationContext(),MapsActivity.class),
                             PendingIntent.FLAG_UPDATE_CURRENT
                     );
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(MapsActivity.this)
                             .setSmallIcon(R.mipmap.ic_launcher).setSound(uri)
-                            .setContentTitle("Puchka Arriving")
-                            .setContentText("He is just few minutes away from you.. :)")
+                            .setContentTitle("Your child is Arriving")
+                            .setContentText("Bus is just few minutes away from you.. :)")
                     .setContentIntent(resultPendingIntent);
             NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
@@ -397,15 +344,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
+
+
+
+
+
     //
 //animating marker smoothly
-    void animateMarker(final LatLng startltln, final LatLng endltln, final Marker marker)
+    void animateMarker(final LatLng startltln, final LatLng endltln, final Marker marker,final float toRotation)
 {
     final LatLng startPosition = startltln;
     final LatLng finalPosition = endltln;
     final Handler handler = new Handler();
+    final float startRotation = marker.getRotation();
     final long start = SystemClock.uptimeMillis();
-    final Interpolator interpolator = new LinearInterpolator();
+    final Interpolator moveinterpolator = new LinearInterpolator();
+    final Interpolator rotateinterpolator = new LinearInterpolator();
+
     final float durationInMs = 3000;
     final boolean hideMarker = false;
 
@@ -419,13 +374,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Calculate progress using interpolator
             elapsed = SystemClock.uptimeMillis() - start;
             t = (float)elapsed / durationInMs;
-            v = interpolator.getInterpolation(t);
+            v = moveinterpolator.getInterpolation(t);
 
             LatLng currentPosition = new LatLng(
                     startPosition.latitude * (1 - t) + finalPosition.latitude * t,
                     startPosition.longitude * (1 - t) + finalPosition.longitude * t);
 
+            float tR = rotateinterpolator.getInterpolation((float) elapsed / durationInMs);
 
+            float rot = tR * toRotation + (1 -tR) * startRotation;
+
+            marker.setRotation(-rot > 180 ? rot/2 : rot);
 
             marker.setPosition(currentPosition);
 
@@ -449,7 +408,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
+//
 
+
+
+//    private void rotateMarker(final Marker marker, final LatLng destination, final float rotation) {
+//
+//        if (marker != null) {
+//
+//            final LatLng startPosition = marker.getPosition();
+//            final float startRotation = marker.getRotation();
+//
+//            final LatLngInterpolator latLngInterpolator = new LatLngInterpolator.Spherical();
+//            ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
+//            valueAnimator.setDuration(3000); // duration 3 second
+//            valueAnimator.setInterpolator(new LinearInterpolator());
+//            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                @Override
+//                public void onAnimationUpdate(ValueAnimator animation) {
+//
+//                    try {
+//                        float v = animation.getAnimatedFraction();
+//                        LatLng newPosition = latLngInterpolator.interpolate(v, startPosition, destination);
+//                        float bearing = computeRotation(v, startRotation, rotation);
+//
+//                        marker.setRotation(bearing);
+//                        marker.setPosition(newPosition);
+//
+//                    }
+//                    catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//            valueAnimator.start();
+//        }
+//    }
+//    private static float computeRotation(float fraction, float start, float end) {
+//        float normalizeEnd = end - start; // rotate start to 0
+//        float normalizedEndAbs = (normalizeEnd + 360) % 360;
+//
+//        float direction = (normalizedEndAbs > 180) ? -1 : 1; // -1 = anticlockwise, 1 = clockwise
+//        float rotation;
+//        if (direction > 0) {
+//            rotation = normalizedEndAbs;
+//        } else {
+//            rotation = normalizedEndAbs - 360;
+//        }
+//
+//        float result = fraction * rotation + start;
+//        return (result + 360) % 360;
+//    }
+
+//
 
 
 
@@ -486,13 +497,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             layoutParams.setMargins(0, 0, 30, 100);
         }
-        mMap.setPadding(0,displayMetrics.heightPixels-500,0,0);
+       // mMap.setPadding(0,displayMetrics.heightPixels-500,0,0);
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         mMap.setMyLocationEnabled(true);
+
 
     }
 
 
+
+
+    void animateToMyLoc() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location loc = locationProviderApi.getLastLocation(googleApiClient);
+        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(),loc.getLongitude()), 15));
+
+
+    }
+    Marker jh;
 
     //FusedLocationProvider to get Users current location details;
     @Override
@@ -505,6 +531,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        animateToMyLoc();
+
+
     }
 
     @Override

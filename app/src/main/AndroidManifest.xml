@@ -33,7 +33,6 @@
             android:value="@string/google_maps_key" />
 
         <activity
-
             android:name=".Splace"
             android:label="@string/title_activity_maps">
             <intent-filter>
@@ -42,8 +41,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".MapsActivity" android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".MapsActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".LoginRegister.LoginAct" />
+        <activity android:name=".LoginRegister.RegisterAct"></activity>
     </application>
 
 </manifest>
